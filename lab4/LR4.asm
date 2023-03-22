@@ -1,105 +1,107 @@
 
-	.586		           	   				; Тип процессора;
-	.model flat, stdcall       				; Модель пам'яти;
-	.stack									; Сегмент Стеку;
-	.data			   		   				; Сегмент Даних;
-		Array dd 0,0,0,2,0,0,0,0,0,5,0,6,7	; Іниц. масив;
-		ArraySize dd 13  					; Кіл. елементів в массиве;
-	.code  									; Сегмент кода;
-	Begin: 									; Оголошуємо початок лістингу команд;
-											;
-			lea ebx, Array					; в еbx Зберигаємо адрес масива
-			push ebx						; Зберигаємо у стек заначення ebx;
-			push ArraySize					; Кіл. елементів в стек
-			push ecx						; Зберигаємо у стек заначення ecx;
+	.586		           	   		        ; Type of processor;
+	.model flat, stdcall       				; Memory model;
+	.stack							; Segment of the stack;
+	.data			   		   		; Data segment;
+		Array dd 0,0,0,2,0,0,0,0,0,5,0,6,7	        ; Initialization of the array;
+		ArraySize dd 13  				; Number of elements in the array;
+	.code  							; Code segment;
+	Begin: 							; Assign the beginning of the command listing;
+											
+			lea ebx, Array				; in "еbx" save the addres of array;
+			push ebx				; save in stack the value "ebx";
+			push ArraySize				; Number of elements in the stack;
+			push ecx				; We store the ecx assignment in the stack;
 			;-------------------------------;
-											; Очищення регістрів;
-			xor eax, eax 					; Очищуємо регистр eax;	
-			xor ebx, ebx 					; Очищуємо регистр ebx;
-			xor ecx, ecx 					; Очищуємо регистр ecx;
-			xor edx, edx 					; Очищуємо регистр edx;
-			xor esi, esi 					; Очищуємо регистр esi;
+								; Cleaning registers;
+			xor eax, eax 				; Cleaning register eax;	
+			xor ebx, ebx 				; Cleaning register ebx;
+			xor ecx, ecx 				; Cleaning register ecx;
+			xor edx, edx 				; Cleaning register edx;
+			xor esi, esi 				; Cleaning register esi;
 											;
-			call CountZeroes				; Викликаємо CountZeroes;
-			jmp Check						; Викликаємо Check;
-											;
+			call CountZeroes			; We call CountZeroes;
+			jmp Check				; We call Check;
+											
 			;-------------------------------;
-			CountZeroes proc				; Підпрограма CountZeroes;
-			mov eax, 1						; Присоюємо регістру значення змінної 1;
-			mov ecx, dword ptr[ebp+16]		; Зберигаємо у есх кiл. eлементiв масива;
-			mov ebx, dword ptr[ebp+20]		; Зберигаємо у еdx адрес масива;
-			mov ecx, ArraySize  			; Присоюємо регістру значення змінної "ArraySize" - розмір масиву;
-			CountingZeroes:					; Початок Циклу CountingZeroes;
-			cmp	Array[esi], 0				; Перевірка: Чи є елемент масиву нулем?
-			jne	It_is_not_zero				; Якщо елемент масиву не є нулем - перестрибуємо збільшування лічильника!
-											;
-			Add edx, eax 					; Якщо, нуль знайденно - лічильник нулів забільшуємо на один;
-											;
-			It_is_not_zero:					;
-			add esi, 4 						; Ітерація (esi = esi + 4);
-			loop CountingZeroes				; Кінець Циклу CountingZeroes;
-			ret 0							; Повернення з підпрограми;
-											;
-			CountZeroes endp				; Кінець підпрограми;
-											;
+			CountZeroes proc			; Subroutine CountZeroes;
+			mov eax, 1				; Assign the value of variable 1 to the register;
+			mov ecx, dword ptr[ebp+16]		; We store the number of elements of the array in ecx;
+			mov ebx, dword ptr[ebp+20]		; We store the address of the array in edx;
+			mov ecx, ArraySize  			; Assign to the register the value of the variable "ArraySize" - the size of the array;
+			CountingZeroes:				; Beginning of CountingZeroes Cycle;
+			cmp	Array[esi], 0			; Check: Is the array element null?
+			jne	It_is_not_zero			; If the element of the array is not zero - we skip the increase of the counter!
+											
+			Add edx, eax 				; If a zero is found, the counter of zeros is increased by one;
+											
+			It_is_not_zero:					
+			add esi, 4 				; Іteration (esi = esi + 4);
+			loop CountingZeroes			; End of Cycle CountingZeroes;
+			ret 0					; Return from subroutine;
+											
+			CountZeroes endp			; End of routine;
+											
 			;-------------------------------;	
-											;
-											;
-			Check:							;
-			test edx, 00000001h          	; Перевірка на парність edx - лічильник нулів; 
-			jnz Need_to_delete              ; Стрибаємо, Якщо кількість 0-их елементів масиву – непарна;
-											;
-			jmp TheEnd						; Стрибаємо в кінець, Якщо кількість 0-их елементів масиву – парна;
-			Need_to_delete:					;
-			call DeleteZeroes				; Викликаємо DeleteZeroes;
-											;
+											
+											
+			Check:							
+			test edx, 00000001h          	; edx parity check - counter of zeros; 
+			jnz Need_to_delete              ; We jump if the number of 0 elements of the array is odd;
+											
+			jmp TheEnd			; Jump to the end If the number of 0 elements of the array is even;
+			Need_to_delete:					
+			call DeleteZeroes		; We call DeleteZeroes;
+											
 			;-------------------------------;
-											;
-			DeleteZeroes proc				; Початок підпрограми;
-				mov eax, 1					; Присоюємо регістру значення змінної 1;
-				push eax					; Зберигаємо у стек заначення eax
-				xor eax, eax				; Очищуємо регистр eax;
-				xor ecx, ecx 				; Очищуємо регистр ecx;
-				xor edx, edx 				; Очищуємо регистр edx;
-				xor esi, esi 				; Очищуємо регистр esi;
-				xor edi, edi				; Очищуємо регистр edi;
-				mov ecx, dword ptr[ebp+16]	; Зберигаємо у есх кiл. eлементiв масива;
-				mov ebx, dword ptr[ebp+20]	; Зберигаємо у еdx адрес масива;
-				mov ecx, ArraySize  		; Присоюємо регістру значення змінної "ArraySize" - розмір масиву;
-				pop eax						; Відновлюємо зі стека значення eax;
-											;
-				DeletingZeroes:				; Початок Циклу DeleteZeroes;
-				mov edi, Array[esi]			;
-				cmp	Array[esi], 0			; Перевірка: Чи є елемент масиву нулем?
-				jne	Not_Delete			    ; Якщо елемент масиву не є нулем - перестрибуємо збільшування лічильника, 
-											; та перевірку та видалення!
-											;
-				Add edx, eax 				; Якщо, нуль знайденно - лічильник нулів забільшуємо на один;
-											;
-				test edx, 00000001h			; Перевірка на парність edx - лічильник нулів;
-				jnz Not_Delete				; Перестрибуємо видалення нульового елементу, Якщо знайдений 0 – непарний;
-											; Видалення 0, Якщо знайдений 0 – парний;
-				push ecx					; Зберигаємо у стек заначення ecx;
-				push esi					; Зберигаємо у стек заначення esi;
-				dec ecx						; Віднвмаємо одиницю від ecx;
-				DeletingLoop:				;
-				mov ebx, Array[esi+4]		; Зберигаємо наступний елемент масиву;
-				mov Array[esi], ebx			; Замінюємо елемент масиву наступним елементом масиву;
-				add esi, 4					; Ітерація (esi = esi + 4);
-				loop DeletingLoop			;
-				mov Array[esi], 0 			; Ставимо нуль у кінець масиву;
-				pop esi						; Відновлюємо зі стека значення esi;
-				sub esi, 4					; Ітерація (esi = esi + 4);
-				pop ecx						; Відновлюємо зі стека значення ecx;
-											;
-				Not_Delete:					;
-				add esi, 4 					; Ітерація (esi = esi + 4);
-				loop DeletingZeroes			; Кінець Циклу DeletingZeroes;
-				ret 0						; Повернення з підпрограми;
-											;
-			DeleteZeroes endp 				; Кінець підпрограми;
-											;
+											
+			DeleteZeroes proc				; Start of subroutine;
+				mov eax, 1				; Assign the value of variable 1 to the register;
+				push eax				; We save the eax assignment to the stack;
+				xor eax, eax				; We clean the registry eax;
+				xor ecx, ecx 				; We clean the registry ecx;
+				xor edx, edx 				; We clean the registry edx;
+				xor esi, esi 				; We clean the registry esi;
+				xor edi, edi				; We clean the registry edi;
+
+				mov ecx, dword ptr[ebp+16]	; We store the number of elements of the array in ESH;
+				mov ebx, dword ptr[ebp+20]	; We store the address of the array in edx;
+				mov ecx, ArraySize  		; Assign to the register the value of the variable "ArraySize" - the size of the array;
+				pop eax				; We restore the value of eax from the stack;
+											
+				DeletingZeroes:				; The beginning of the Cycle DeleteZeroes;
+				mov edi, Array[esi]			
+				cmp	Array[esi], 0			; Check: Is the array element null?
+				jne	Not_Delete			; If the element of the array is not zero - we skip the increase of the counter,
+									; and check and delete!
+											
+				Add edx, eax 				; If a zero is found, the counter of zeros is increased by one;
+											
+				test edx, 00000001h			; edx parity check - counter of zeros;
+				jnz Not_Delete				; We skip the deletion of the zero element. If the found 0 is odd;
+										
+                                                                                ; Removing 0. If found 0 is even;
+				push ecx					; We store the ecx assignment in the stack;
+				push esi					; We store the esi assignment in the stack;
+				dec ecx						; Subtract the unit from ecx;
+				DeletingLoop:				
+				mov ebx, Array[esi+4]		; We store the next element of the array;
+				mov Array[esi], ebx		; We replace the element of the array with the next element of the array;
+				add esi, 4			; Iteration (esi = esi + 4);
+				loop DeletingLoop			
+				mov Array[esi], 0 		; We put zero at the end of the array;
+				pop esi				; We restore the value of esi from the stack;
+				sub esi, 4			; Iteration (esi = esi + 4);
+				pop ecx				; We restore the value of ecx from the stack;
+											
+				Not_Delete:					
+				add esi, 4 				; Iteration (esi = esi + 4);
+				loop DeletingZeroes			; End of Cycle DeletingZeroes;
+				ret 0					; Return from subroutine;
+											
+			DeleteZeroes endp 				; End of routine;
+											
 			;-------------------------------;
-											;
-		TheEnd: ret							; Корекне завершення програми;
-		end Begin 				   			; Kiнець лістингу команд.
+											
+		TheEnd: ret						; Proper termination of the program;
+		end Begin 				   		; End of command listing.
